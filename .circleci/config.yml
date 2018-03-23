@@ -54,16 +54,12 @@ jobs:
           command: tar czf dist.tar.gz dist/
 
       - store_artifacts:
-          path:
-            - dist.zip
-            - dist.tar.gz
-          destination: module/
+          path: dist.zip
+          destination: module
 
-      - persist_to_workspace:
-          root: *workdir
-          paths:
-            - dist.zip
-            - dist.tar.gz
+      - store_artifacts:
+          path: dist.tar.gz
+          destination: module
 
   test:
     <<: *template
