@@ -22,8 +22,10 @@ jobs:
             - dependencies-{{ checksum "package.json" }}
             - dependencies- # fall back to the latest available cache
 
-      # install dependencies
-      - run: yarn install --production --non-interactive
+      - run:
+          name: Install dependencies
+          command:
+            - yarn install --production --non-interactive
 
       # save the dependencies to the cache
       - save_cache:
@@ -31,8 +33,10 @@ jobs:
             - node_modules/
           key: dependencies-{{ checksum "package.json" }}
 
-      # build the project
-      - run: yarn build
+      - run:
+          name: Build the module
+          command:
+            - yarn build
 
       # save the dependencies for downstream jobs
       - persist_to_workspace:
@@ -45,17 +49,19 @@ jobs:
     <<: *template
     steps:
       - *attach
-      
-      # output the built files as CircleCI artifacts
-      - run: zip -r dist.zip dist/
-      - run: tar czf dist.tar.gz dist/
-      
+
+      - run:
+          name: Bundle the module to store as CircleCI artifacts
+          command: 
+            - zip -r dist.zip dist/
+            - tar czf dist.tar.gz dist/
+
       - store_artifacts:
           path:
             - dist.zip
             - dist.tar.gz
           destination: module/
-      
+
       - persist_to_workspace:
           root: *workdir
           paths:
@@ -67,8 +73,11 @@ jobs:
     steps:
       - *attach
 
-      - run: yarn test
-      
+      - run:
+          name: Test the module
+          command:
+            - yarn test
+
       - persist_to_workspace:
           root: *workdir
           paths:
@@ -79,23 +88,28 @@ jobs:
     steps:
       - *attach
       
-      - run: yarn coverage
+      - run:
+          name: Upload test coverage reports
+          command:
+            - yarn coverage
   
   release:
     <<: *template
     steps:
       - *attach
-      
-      # release the current version to GitHub releases
-      - run: 
+
+      - run:
+          name: Upload the module to GitHub releases
+          command: echo "Not implemented yet"
 
   deploy:
     <<: *template
     steps:
       - *attach
-      
-      # package and upload the module to npm
-      - run: 
+
+      - run:
+          name: Package and upload the module to npm
+          command: echo "Not implemented yet"
 
 workflows:
   version: 2
