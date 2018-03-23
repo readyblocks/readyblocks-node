@@ -44,7 +44,7 @@ jobs:
   artifact:
     <<: *template
     steps:
-      <<: *attach
+      - *attach
       
       # output the built files as CircleCI artifacts
       - run: zip -r dist.zip dist/
@@ -65,7 +65,7 @@ jobs:
   test:
     <<: *template
     steps:
-      <<: *attach
+      - *attach
 
       - run: yarn test
       
@@ -77,14 +77,14 @@ jobs:
   coverage:
     <<: *template
     steps:
-      <<: *attach
+      - *attach
       
       - run: yarn coverage
   
   release:
     <<: *template
     steps:
-      <<: *attach
+      - *attach
       
       # release the current version to GitHub releases
       - run: 
@@ -92,7 +92,7 @@ jobs:
   deploy:
     <<: *template
     steps:
-      <<: *attach
+      - *attach
       
       # package and upload the module to npm
       - run: 
