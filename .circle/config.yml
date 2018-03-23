@@ -1,0 +1,132 @@
+job_template: &template
+  working_directory: &workdir /tmp/readyblocks-node
+  docker:
+    image: circleci/node:8.10
+  environment:
+    
+
+workspace: &attach
+  - attach_workspace:
+      at: *workdir
+
+version: 2
+jobs:
+  build:
+    <<: *template
+    steps:
+      - checkout
+
+      # restore cached dependencies
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies- # fall back to the latest available cache
+
+      # install dependencies
+      - run: yarn install --production --non-interactive
+
+      # save the dependencies to the cache
+      - save_cache:
+          paths:
+            - node_modules/
+          key: dependencies-{{ checksum "package.json" }}
+
+      # build the project
+      - run: yarn build
+
+      # save the dependencies for downstream jobs
+      - persist_to_workspace:
+          root: *workdir
+          paths:
+            - node_modules/
+            - dist/
+
+  artifact:
+    <<: *template
+    steps:
+      <<: *attach
+      
+      # output the built files as CircleCI artifacts
+      - run: zip -r dist.zip dist/
+      - run: tar czf dist.tar.gz dist/
+      
+      - store_artifacts:
+          path:
+            - dist.zip
+            - dist.tar.gz
+          destination: module/
+      
+      - persist_to_workspace:
+          root: *workdir
+          paths:
+            - dist.zip
+            - dist.tar.gz
+
+  test:
+    <<: *template
+    steps:
+      <<: *attach
+
+      - run: yarn test
+      
+      - persist_to_workspace:
+          root: *workdir
+          paths:
+            - .nyc_output/
+  
+  coverage:
+    <<: *template
+    steps:
+      <<: *attach
+      
+      - run: yarn coverage
+  
+  release:
+    <<: *template
+    steps:
+      <<: *attach
+      
+      # release the current version to GitHub releases
+      - run: 
+
+  deploy:
+    <<: *template
+    steps:
+      <<: *attach
+      
+      # package and upload the module to npm
+      - run: 
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - build
+      - artifact:
+          requires:
+            - build
+      - test:
+          requires:
+            - build
+      - coverage:
+          requires:
+            - test
+      - release:
+          filter:
+            branches:
+              only:
+                - master
+            tags:
+              only: /.*/
+          requires:
+            - test
+      - deploy:
+          type: approval
+          filter:
+            branches:
+              only:
+                - master
+            tags:
+              only: /.*/
+          requires:
+            - test
