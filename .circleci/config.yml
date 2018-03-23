@@ -126,7 +126,7 @@ workflows:
           requires:
             - test
       - release:
-          filter:
+          filters:
             branches:
               only:
                 - master
@@ -135,8 +135,7 @@ workflows:
           requires:
             - test
       - deploy:
-          type: approval
-          filter:
+          filters:
             branches:
               only:
                 - master
