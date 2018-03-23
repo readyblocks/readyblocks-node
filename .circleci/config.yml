@@ -24,8 +24,7 @@ jobs:
 
       - run:
           name: Install dependencies
-          command:
-            - yarn install --production --non-interactive
+          command: yarn install --production --non-interactive
 
       # save the dependencies to the cache
       - save_cache:
@@ -35,8 +34,7 @@ jobs:
 
       - run:
           name: Build the module
-          command:
-            - yarn build
+          command: yarn build
 
       # save the dependencies for downstream jobs
       - persist_to_workspace:
@@ -51,10 +49,12 @@ jobs:
       - *attach
 
       - run:
-          name: Bundle the module to store as CircleCI artifacts
-          command: 
-            - zip -r dist.zip dist/
-            - tar czf dist.tar.gz dist/
+          name: Bundle the module into a Zip file
+          command: zip -r dist.zip dist/
+
+      - run:
+          name: Bundle the module into a gzipped tar file
+          command: tar czf dist.tar.gz dist/
 
       - store_artifacts:
           path:
@@ -75,8 +75,7 @@ jobs:
 
       - run:
           name: Test the module
-          command:
-            - yarn test
+          command: yarn test
 
       - persist_to_workspace:
           root: *workdir
@@ -90,8 +89,7 @@ jobs:
       
       - run:
           name: Upload test coverage reports
-          command:
-            - yarn coverage
+          command: yarn coverage
   
   release:
     <<: *template
