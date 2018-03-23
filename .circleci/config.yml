@@ -38,8 +38,7 @@ jobs:
       - persist_to_workspace:
           root: *workdir
           paths:
-            - node_modules/
-            - dist/
+            - .
 
   artifact:
     <<: *template
