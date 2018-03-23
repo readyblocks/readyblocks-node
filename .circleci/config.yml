@@ -6,7 +6,7 @@ job_template: &template
     
 
 workspace: &attach
-  - attach_workspace:
+  attach_workspace:
       at: *workdir
 
 version: 2
