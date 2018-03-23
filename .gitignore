@@ -1,5 +1,6 @@
 # test coverage files
 .nyc_output/
+coverage.lcov
 
 # compiled files
 dist/
