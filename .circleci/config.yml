@@ -1,9 +1,7 @@
 job_template: &template
   working_directory: &workdir /tmp/readyblocks-node
   docker:
-    image: circleci/node:8.10
-  environment:
-    
+    - image: circleci/node:8.10
 
 workspace: &attach
   attach_workspace:
