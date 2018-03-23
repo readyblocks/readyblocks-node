@@ -1,0 +1,8 @@
+# test coverage files
+.nyc_output/
+
+# compiled files
+dist/
+
+# yarn command logs
+yarn-error.log
